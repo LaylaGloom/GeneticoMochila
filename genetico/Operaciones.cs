@@ -58,6 +58,63 @@ namespace genetico
             }
         }
 
+        public void iniciar_poblacion(int t_poblacion, int elementos_en_mochila, string resOptima, string ganancias, string pesos) //realizar paso uno
+        {
+            Random rand = new Random(); //objeto para generar numeros aleatorios
+            String cuerpo; //cuerpo del individuo (Grupo de 8 bits)
+
+            int digito; //entero que estara entre 0 o 1
+
+            for (int i = 0; i < t_poblacion; i++) //for para generar a todos los individuos
+            {
+                cuerpo = "";
+
+                for (int j = 0; j < elementos_en_mochila; j++)
+                {
+                    digito = rand.Next(0, 2); //generar numero que sera 0 o 1
+                    cuerpo += digito.ToString();//añadir el bit al cuerpo
+                }
+
+                Individuo nuevo = new Individuo(cuerpo); // generar individuo
+
+                // Insertar a el nodo en su parte ganancias
+                int a = 0;
+                for (; ganancias[a].Equals('\\'); a++) { }
+                pesos.Remove(a + 1, 4);
+                nuevo.ganancia = Convert.ToDouble(ganancias.Substring(0,a));
+                //ganancias.Remove(0,a+1);
+                Console.WriteLine(nuevo.ganancia);
+                //
+
+                // Insertar a el nodo en su parte ganancias
+                a = 0;
+                for (; pesos[a].Equals('\\'); a++) { }
+                pesos.Remove(a+1, 4);
+                nuevo.peso = Convert.ToDouble(pesos.Substring(0, a));
+                //pesos.Remove(0, a + 1);
+                Console.WriteLine(nuevo.peso);
+                Console.WriteLine("");
+                //
+
+                if (inicio == null) //comprobar si es el primer elemento
+                {
+                    inicio = nuevo;
+                }
+                else
+                {
+                    Individuo aux = inicio; //evitar que la lista se vea afectada
+
+                    while (aux.siguiente != null)
+                        aux = aux.siguiente; //conseguimos el ultimo elemento de la lista
+
+                    aux.siguiente = nuevo; //guardamos el individuo
+                }
+
+                cuerpo = ""; //vaciamos el cuerpo para el siguiente individuo
+
+            }
+        }
+
         public void calcular_inicio() //calcular x y aptitud
         {
             double apti = 0, //varibale donde se almacenará la aptitud del individuo
@@ -443,7 +500,7 @@ namespace genetico
 
                 while (aux != null)
                 {
-                    if (aux.aptitud > mejor)
+                    if (aux.aptitud >= mejor)
                     {
                         mejor = aux.aptitud;
                         m_x = aux.x;

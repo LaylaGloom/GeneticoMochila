@@ -17,6 +17,9 @@ namespace genetico
         public double fnom;
         public double acumulado;
 
+        public double peso;
+        public double ganancia;
+
         //Constructor
         public Individuo(String _bites)
         {
@@ -26,6 +29,9 @@ namespace genetico
             fnom = 0;
             acumulado = 0;
             bites = _bites;
+
+            peso = 0;
+            ganancia = 0;
         }
 
     }

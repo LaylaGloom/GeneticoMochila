@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.IO;
 
 namespace genetico
 {
@@ -15,6 +16,13 @@ namespace genetico
         {
             InitializeComponent();
         }
+
+        bool tipoAlgoritmo = true;
+        string resOptima = "",
+            pesos = "", 
+            ganancias = "";
+        int elementos_en_mochila = 10;
+
 
         private void btnCalcular_Click(object sender, EventArgs e)
         {
@@ -54,36 +62,44 @@ namespace genetico
                             {
                                 Operaciones accion = new Operaciones();
 
-                                accion.iniciar_poblacion(poblacion_i); //generar poblacion
-
-                                do
+                                if(tipoAlgoritmo)//Genetico
                                 {
-                                    con_gen++;
+                                    accion.iniciar_poblacion(poblacion_i); //generar poblacion
 
-                                    accion.calcular_inicio();
+                                    do
+                                    {
+                                        con_gen++;
 
-                                    accion.cal_final();
+                                        accion.calcular_inicio();
 
-                                    accion.generarLosNuevosPadresDeLaPatria(poblacion_i);
+                                        accion.cal_final();
 
-                                    accion.cruze(probabilidad_c, poblacion_i);
+                                        accion.generarLosNuevosPadresDeLaPatria(poblacion_i);
 
-                                    accion.mute(probabilidad_m);
+                                        accion.cruze(probabilidad_c, poblacion_i);
 
-                                } while (con_gen <= generaciones);
+                                        accion.mute(probabilidad_m);
 
-                                lblX.Text = "";
+                                    } while (con_gen <= generaciones);
 
-                                string aux = accion.imprimir_ganadores();
+                                    lblX.Text = "";
 
-                                if(aux != "")
+                                    string aux = accion.imprimir_ganadores();
+
+                                    if (aux != "")
+                                    {
+                                        lblX.Text = "x = " + aux;
+                                    }
+                                    else
+                                    {
+                                        MessageBox.Show("No hay resultados optimos en todas las generaciones");
+                                    }
+                                } 
+                                else // DE LA MOCHILA
                                 {
-                                    lblX.Text = "x = " + aux;
+                                    accion.iniciar_poblacion(poblacion_i, elementos_en_mochila , resOptima, ganancias, pesos); //generar poblacion
                                 }
-                                else
-                                {
-                                    MessageBox.Show("No hay resultados optimos en todas las generaciones");
-                                }
+                                
                             }
                             else
                             {
@@ -109,12 +125,7 @@ namespace genetico
             {
                 MessageBox.Show("Favor de llenar todos los campos con la información necesaria");
             }
-        }
-
-        private void btnTxt_Click(object sender, EventArgs e)
-        {
-            
-        }
+        } 
 
         private void btnSalir_Click(object sender, EventArgs e)
         {
@@ -127,16 +138,52 @@ namespace genetico
 
         private void btnGenetico_Click(object sender, EventArgs e)
         {
-            btnTxt.Visible = false;
+            gbxMochila.Visible = false;
             lblFunción.Visible = true;
             btnTitulo.Text = "ALGORITMO GENÉTICO PURO";
+            tipoAlgoritmo = true;
         }
 
         private void btnMochila_Click(object sender, EventArgs e)
         {
-            btnTxt.Visible = true;
+            gbxMochila.Visible = true;
             lblFunción.Visible = false;
             btnTitulo.Text = "PROBLEMA DE LA MOCHILA";
+            tipoAlgoritmo = false;
+        }
+
+        private void btnResOpt_Click(object sender, EventArgs e)
+        {
+            if(ofdAbrirArchivo.ShowDialog() == DialogResult.OK)
+            {
+                using(StreamReader sr = new StreamReader(ofdAbrirArchivo.FileName))
+                {
+                    resOptima = sr.ReadToEnd();
+                }
+            }
+        }
+
+        private void btnPesos_Click(object sender, EventArgs e)
+        {
+            if (ofdAbrirArchivo.ShowDialog() == DialogResult.OK)
+            {
+                using (StreamReader sr = new StreamReader(ofdAbrirArchivo.FileName))
+                {
+                    label3.Text = sr.ReadToEnd();
+                     
+                }
+            }
+        }
+
+        private void btnGanancias_Click(object sender, EventArgs e)
+        {
+            if (ofdAbrirArchivo.ShowDialog() == DialogResult.OK)
+            {
+                using (StreamReader sr = new StreamReader(ofdAbrirArchivo.FileName))
+                {
+                    ganancias = sr.ReadToEnd();
+                }
+            }
         }
     }
 }
